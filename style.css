@@ -1,15 +1,18 @@
 body{
     height: 100vh;
+    max-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: rgb(181, 181, 181);
 }
 
-.container{
-    border: 1px solid black;
+.main{
+    max-width: 90%;
+    border: 2px solid black;
     border-radius: 10px;
-    width: 30%;
     padding: 0;
+    background-color: white;
 }
 
 .header{
@@ -27,6 +30,41 @@ body{
 header h1{
     height: 50px;
 }
+#list{
+    padding: 0 5px;
+}
+#list li{
+    list-style: none;
+    line-height: 1em;
+    width: 100%;
+    height: 2.3em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+#list li i.co{
+    position: absolute;
+    padding-left: 5px;
+    left: 15px;
+    top: 10px;
+}
+#list li p{
+    position: absolute;
+    left: 50px;
+    top: 10px;
+    font-weight: 500;
+}
+#list li i.de{
+    position: absolute;
+    padding-left: 5px;
+    right: 15px;
+    top: 10px;
+}
+#list li i.fa-circle-check{
+    color: green;
+}
+
 .clear{
     width: 50px;
     height: 50px;
@@ -46,6 +84,7 @@ header h1{
 .content{
     height: 350px;
 }
+
 .add-item{
     display: flex;
     align-items: center;
@@ -72,6 +111,10 @@ header h1{
     font-weight: bolder;
     border: none;
     color: rgb(6, 105, 254);
+}
+.completeItem{
+    text-decoration: line-through;
+    color: lightslategray;
 }
 
 /***** HORLOGE *****/
