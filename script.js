@@ -1,133 +1,131 @@
-//******** Header DATE */
-
-const date1 = new Date().toLocaleDateString('fr-FR',{
-    weekday: 'long',
-    year:"numeric",
-    month:"numeric",
-    day:"numeric"
-});
-document.querySelector('#date').textContent = date1 ;
-
-
-
-//*********** Horloge
-
-// HORLOGE
-// rafraichi toutes les secondes
-setInterval(setClock, 1000)
-// récupere l'aiguille des heures , des minutes, et secondes
-const hourHand = document.querySelector('#hour_clock')
-const minuteHand = document.querySelector('#minute_clock')
-const secondHand = document.querySelector('#seconde_clock')
-
-
-
-// Met à jour l'horloge et l'affiche
-function setClock() {
-    const currentDate = new Date();
-    const secondsRatio = currentDate.getSeconds() / 60;
-    const minutesRatio = (secondsRatio + currentDate.getMinutes()) / 60;
-    const hoursRatio = (minutesRatio + currentDate.getHours()) / 12;
-    setRotation(secondHand, secondsRatio);
-    setRotation(minuteHand, minutesRatio);
-    setRotation(hourHand, hoursRatio);
-  
-    // Rafraîchit l'horloge lors de la prochaine animation du navigateur
-    requestAnimationFrame(setClock);
-  }
-  
-  // Applique la rotation à l'élément
-  function setRotation(element, rotationRatio) {
-    element.style.setProperty('--rotation', rotationRatio * 360);
-  }
-  
-  // Démarre l'horloge
-  requestAnimationFrame(setClock);
-
-
-/** récupération de l'input */
-
-const input = document.querySelector('input');
-let id=1;
-let done;
-let trash;
-
-let listArray = [{
-    name,
-    id: id,
-    done,
-    trash
-}];
-
-
-document.addEventListener('keyup',function(e){
-    if(e.key=="Enter" && input.value !=''){
-        const toDo = input.value;
-        addToList(toDo,id,done,trash);
-        listArray.push({
-            name : toDo,
-            id : id,
-            done : false,
-            trash : false
-        });
-        saveListToLocalStorage()
-        input.value ="";
-        id++;
-        
-    } 
-});
-/*** Selection de la liste */
-
-/*** Fonction d'ajout */
-const list = document.querySelector('#list');
-
-function addToList( toDo, id){
-    if (trash) { return; }
-
-    const text = `
-    <li class="item" id=item-${id}>
-        <i class="co fa fa-circle-thin " job="complete"></i>
-        <p class="text"> ${toDo} </p>
-        <i class="de fa fa-trash-o" job="delete"></i>
-    </li>
-    `
-    const position = 'beforeend';
-    list.insertAdjacentHTML(position,text);
-
+const dateElement = document.querySelector('#date');
+const dateOptions = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric'
 };
+const currentDate = new Date().toLocaleDateString('fr-FR', dateOptions);
+dateElement.textContent = currentDate;
 
-// Fonction pour supprimer un élément de la liste
-function removeFromList(id) {
-    listArray = listArray.filter(item => item.id !== id);
-    const listItem = document.getElementById(`item-${id}`);
-    listItem.remove();
-    
+const hourHand = document.querySelector('#hour_clock');
+const minuteHand = document.querySelector('#minute_clock');
+const secondHand = document.querySelector('#seconde_clock');
+
+function setClock() {
+  const currentDate = new Date();
+  const secondsRatio = currentDate.getSeconds() / 60;
+  const minutesRatio = (secondsRatio + currentDate.getMinutes()) / 60;
+  const hoursRatio = (minutesRatio + currentDate.getHours()) / 12;
+  setRotation(secondHand, secondsRatio);
+  setRotation(minuteHand, minutesRatio);
+  setRotation(hourHand, hoursRatio);
+  requestAnimationFrame(setClock);
+}
+
+function setRotation(element, rotationRatio) {
+  element.style.setProperty('--rotation', rotationRatio * 360);
+}
+
+setClock();
+
+const input = document.querySelector('#input');
+let id = 1;
+const tasks = {};
+
+document.addEventListener('keyup', function (e) {
+  if (e.key === 'Enter' && input.value !== '') {
+    const toDo = input.value.trim();
+    addTask(toDo, id);
+    input.value = '';
+    id++;
   }
-  
-  // Gestionnaire d'événement pour le clic sur l'icône de la poubelle
-  list.addEventListener('click', function(event) {
-    const element = event.target;
-    const elementJob = element.attributes.job.value;
-    const elementClass = element.classList;
-    const check = 'fa-circle-check';
-    const thin = "fa-circle-thin";
-    const listItem = element.parentNode;
-    const itemText = listItem.querySelector('.text');
-    
-    if (elementJob === 'delete') {
-        const id = parseInt(element.parentNode.id.split('-')[1]);
-        removeFromList(id);
-        saveListToLocalStorage()
-    }
-    if (elementJob === 'complete'){
-        if(elementClass.contains(thin)){
-            elementClass.remove(thin);
-            elementClass.add(check);   
-            itemText.classList.add('completeItem'); 
-        }else{
-            elementClass.remove(check);
-            elementClass.add(thin);
-            itemText.classList.remove('completeItem'); 
-        }
-    }
-  });
+});
+
+function addTask(toDo, id) {
+  const listItem = createTaskElement(toDo, id);
+  list.appendChild(listItem);
+
+  tasks[id] = {
+    name: toDo,
+    done: false
+  };
+}
+
+function createTaskElement(toDo, id) {
+  const listItem = document.createElement('li');
+  listItem.classList.add('item');
+  listItem.id = `item-${id}`;
+
+  const circleIcon = document.createElement('i');
+  circleIcon.classList.add('co', 'fa', 'fa-circle-thin');
+  circleIcon.setAttribute('job', 'complete');
+  circleIcon.addEventListener('click', () => toggleTaskCompletion(id));
+
+  const taskText = document.createElement('p');
+  taskText.classList.add('text');
+  taskText.textContent = toDo;
+
+  const editIcon = document.createElement('i');
+  editIcon.classList.add('ed', 'fa', 'fa-pencil');
+  editIcon.setAttribute('job', 'edit');
+  editIcon.addEventListener('click', () => editTask(id));
+
+  const deleteIcon = document.createElement('i');
+  deleteIcon.classList.add('de', 'fa', 'fa-trash-o');
+  deleteIcon.setAttribute('job', 'delete');
+  deleteIcon.addEventListener('click', () => removeTask(id));
+
+  listItem.appendChild(circleIcon);
+  listItem.appendChild(taskText);
+  listItem.appendChild(editIcon);
+  listItem.appendChild(deleteIcon);
+
+  return listItem;
+}
+
+function editTask(id) {
+  const listItem = document.getElementById(`item-${id}`);
+  const taskText = listItem.querySelector('.text');
+  const task = tasks[id];
+  const editedText = prompt('Modifier la tâche :', task.name);
+
+  if (editedText !== null) {
+    task.name = editedText;
+    taskText.textContent = editedText;
+  }
+}
+
+function removeTask(id) {
+  delete tasks[id];
+  const listItem = document.getElementById(`item-${id}`);
+  listItem.remove();
+}
+
+function toggleTaskCompletion(id) {
+  const listItem = document.getElementById(`item-${id}`);
+  const circleIcon = listItem.querySelector('.co');
+  const taskText = listItem.querySelector('.text');
+  const task = tasks[id];
+
+  if (task.done) {
+    task.done = false;
+    circleIcon.classList.remove('fa-circle-check');
+    circleIcon.classList.add('fa-circle-thin');
+    taskText.classList.remove('completeItem');
+  } else {
+    task.done = true;
+    circleIcon.classList.remove('fa-circle-thin');
+    circleIcon.classList.add('fa-circle-check');
+    taskText.classList.add('completeItem');
+  }
+}
+
+document.querySelector('#addBtn').addEventListener('click', function () {
+  const toDo = input.value.trim();
+  if (toDo !== '') {
+    addTask(toDo, id);
+    input.value = '';
+    id++;
+  }
+});

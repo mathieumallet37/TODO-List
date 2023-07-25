@@ -48,11 +48,13 @@ header h1{
     padding-left: 5px;
     left: 15px;
     top: 10px;
+    cursor: pointer;
 }
 #list li p{
     position: absolute;
     left: 50px;
     top: 10px;
+    font-size: 1.2em;
     font-weight: 500;
 }
 #list li i.de{
@@ -60,21 +62,24 @@ header h1{
     padding-left: 5px;
     right: 15px;
     top: 10px;
-}
-#list li i.fa-circle-check{
-    color: green;
+    cursor: pointer;
 }
 
-.clear{
-    width: 50px;
-    height: 50px;
+#list li i.ed{
     position: absolute;
-    top: 20px;
-    right: 20px;
+    padding-left: 5px;
+    right: 40px;
+    top: 10px;
+    cursor: pointer;
+    padding-right: 10px;
+    border-right: 1px solid rgb(171, 171, 171);
 }
-.clear i{
-    font-size: 30px;
+
+#list li i.fa-circle-check{
+    color: green;
+    cursor: pointer;
 }
+
 #date{
     font-size: 20px;
     font-weight: bold;
@@ -112,9 +117,18 @@ header h1{
     border: none;
     color: rgb(6, 105, 254);
 }
+#addBtn{
+    cursor: pointer;
+}
 .completeItem{
     text-decoration: line-through;
     color: lightslategray;
+}
+
+ul li input{
+    margin: 5px 45px;
+    border-color: orange;
+    color: orange;
 }
 
 /***** HORLOGE *****/
